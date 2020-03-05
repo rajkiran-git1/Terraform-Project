@@ -11,6 +11,7 @@ resource "aws_vpc" "main" {
 }
 
 # Subnets
+
 resource "aws_subnet" "main-public-1" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
@@ -74,6 +75,33 @@ resource "aws_subnet" "main-private-3" {
 
   tags = {
     Name = "main-private-3"
+  }
+}
+
+resource "aws_network_acl" "main" {
+  vpc_id = aws_vpc.main.id
+  subnet_ids = ["us-weast-1a","us-weast-1b","us-weast-1a"]
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 200
+    action     = "allow"
+    cidr_block = "10.3.0.0/18"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "10.3.0.0/18"
+    from_port  = 80
+    to_port    = 80
+  }
+
+  tags = {
+    Name = "main"
   }
 }
 
